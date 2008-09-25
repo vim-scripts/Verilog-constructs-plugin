@@ -1,0 +1,4 @@
+module module_identifier [# ( parameter_declaration { , parameter_declaration } )] (list_of_port_declarations);
+{non_port_module_item};
+
+endmodule

@@ -1,0 +1,86 @@
+README for vlog-support.vim (Version 1.0) / May 10 2008
+
+  *  INSTALLATION
+  *  RELEASE NOTES 
+  *  FILES
+  *  ADDITIONAL TIPS
+
+Verilog Support implements a Verilog-IDE for Vim/gVim. It is written to considerably
+speed up writing code in a consistent style.  This is done by inserting
+complete statements, comments,and code snippets. There
+are many additional hints and options which can improve speed and comfort when
+writing shell scripts. 
+ 
+=======================================================================================
+  INSTALLATION
+=======================================================================================
+
+The subdirectories in the zip archive  vlog-support.zip  mirror the directory structure 
+which is needed below the local installation directory $HOME/.vim/ . On windows it will be
+$VIM/vimfiles
+
+(1) Copy the zip archive  vlog-support.zip to $HOME/.vim ($VIM/vimfiles) and run
+
+      unzip vlog-support.zip
+
+(2) Set at least some personal details into '.vimrc'. (For windows in $VIM/_vimrc)
+      Here the minimal personalization (my settings as an example, of course):
+
+  let g:VERILOG_AuthorName   = "T. Anil Kumar"     
+  let g:VERILOG_AuthorRef    = "MTS"                         
+  let g:VERILOG_Email        = "anil.tallaprada@gmail.com"            
+
+
+There are a lot of features and options which can be used and influenced:
+
+  *  use of template files and tags
+  *  using and managing personal code snippets
+  *  Verilog dictionary for keyword completion
+  *  removing the root menu
+
+Restart gVim generate the help tags 
+
+  :helptags ~/.vim/doc  (Unix)
+  :helptags $VIM/vimfiles/doc (Windows)
+
+and look at the VerilogSupport help with
+
+  :help vlogsupport 
+
+             +-----------------------------------------------+
+             | +-------------------------------------------+ |
+             | |    ** Please read the documentation **    | |
+             | |    Actions differ for different modes!    | |
+             | +-------------------------------------------+ |
+             +-----------------------------------------------+
+
+=======================================================================================
+  FILES
+=======================================================================================
+
+README.vlogsupport                  This file.
+
+ftplugin/verilog.vim                A filetype plugin. Defines dictionary path and more.
+
+plugin/vlog-support.vim             The Verilog plugin for gVim.
+
+doc/verilogsupport.txt              The help file for the local online help. 
+
+vlog-support/codesnippets/*         Some code snippets as a starting point.
+
+vlog-support/templates/*            bash template files (see bashsupport.txt).
+
+vlog-support/wordlists/*            Additional word lists (dictionaries).
+
+=======================================================================================
+  ADDITIONAL TIPS
+=======================================================================================
+
+(1) Use ALT + V to open Verilog menu.
+(2) If you press ALT + V , you will see each of the sub_menu having a underscore
+    below a particular character. So to open submenu Comments just use ALT + V + C.
+    Similarly ALT+V+S will open submenu statements.
+(3) Use SHIFT +TAB  for keyword completion and if more than one matches are available use 
+    CTRL +N or CTRL +P to loop through the available options.
+
+=======================================================================================

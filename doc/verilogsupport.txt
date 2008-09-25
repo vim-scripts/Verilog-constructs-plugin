@@ -1,0 +1,545 @@
+*vlogsupport.txt*                vlog Support                 May 09 2008
+
+vlog Support                                      *vlog-support* *vlogsupport*
+                             Plugin version 1.0
+                        for Vim version 7.0 and above
+                       T ANIL KUMAR  <anil.tallpragada@gmail.com>
+
+vlog Support implements a Verilog-IDE for Vim/gVim. It is written to considerably
+speed up writing code in a consistent style.  This is done by inserting
+complete statements, comments, attributes and code snippets.   There
+are many additional hints and options which can improve speed and comfort when
+writing Verilog Code 
+
+ 1.     Usage with GUI                           |vlogsupport-usage-gvim|
+ 1.1     Menu 'Comments'                         |vlogsupport-comments|
+ 1.1.1    Append aligned comments                |vlogsupport-aligned-comm|
+ 1.1.2    Code to comment                        |vlogsupport-code-to-comm|
+ 1.1.3    Comment to code                        |vlogsupport-comm-to-code|
+ 1.1.4    Block-Comment                          |vlogsupport-block-comment|
+ 1.1.5    Block-Uncomment                        |vlogsupport-block-uncomment|
+ 1.1.6    Frame comments, file header, ...       |vlogsupport-comm-templates|
+ 1.1.7    Date + Comment                         |vlogsupport-comm-date|	
+ 1.1.8    KEYWORD + comment                      |vlogsupport-comm-keywords|
+ 1.1.9    Tags + Comment                         |vlogsupport-comm-tags|
+ 1.2     Menu 'Statements'                       |vlogsupport-statements|
+ 1.2.1    Normal mode, insert mode               |vlogsupport-stat-norm-ins|
+ 1.2.2    Visual mode                            |vlogsupport-stat-visual|
+ 1.2.3    Code Snippets                          |vlogsupport-stat-snippets|
+ 1.3     Menu Miscellaneous                      |vlogsupport-miscellaneous|
+ 1.3.1    Force-Release                          |vlogsupport-force-release|
+ 1.3.2    Assign-Deassign                        |vlogsupport-assign-deassign|
+ 1.3.4    Translate-Off/Translate-on             |vlogsupport-translateon-off| 
+ 1.4     Menu Plugin settings                    |vlogsupport-plugin-settings|
+ 1.5     Help (plugin)                           |vlogsupport-help-plugin|
+ 2.     Customization and configuration          |vlogsupport-customization|
+ 2.1     Files                                   |vlogsupport-custom-files|
+ 2.2     Global variables                        |vlogsupport-custom-variables|
+ 2.3     The root menu                           |vlogsupport-custom-root|
+ 2.4     Installation                            |vlogsupport-install|
+ 3.     Template files and tags                  |vlogsupport-tempfiles|
+ 3.1     Template files                          |vlogsupport-tempfiles|
+ 3.2     Tags                                    |vlogsupport-tags|
+ 4.     Verilog dictionary                       |vlogsupport-dictionary|
+ 5.     Release Notes                            |vlogsupport-release-notes|
+
+        How to add this help file to Vim's help  |add-local-help|
+
+
+==============================================================================
+1.  USAGE with GUI  (gVim)                            *vlogsupport-usage-gvim*
+==============================================================================
+
+If the menus are not visible call them with the entry "Load Verilog Support"
+in the standard Tools-menu.
+
+------------------------------------------------------------------------------
+1.1  MENU 'Comments'                                    *vlogsupport-comments*
+------------------------------------------------------------------------------
+
+1.1.1 APPEND ALIGNED COMMENTS TO CONSECUTIVE LINES  *vlogsupport-aligned-comm*
+--------------------------------------------------
+
+In NORMAL MODE the menu entry 'end-of-line-comment' 
+will append a comment to the current line
+
+In VISUAL MODE this entry will append aligned comments to all marked lines.
+Marking the 4 lines
+
+ input [7:0] DATA1, DATA2 ;
+ output [7:0] DATA0 ;
+ reg [7:0] DATA0;
+ 
+ reg [7:0] highreg_output, lowreg_output;
+
+and choosing 'end-of-line-comment' will yield 
+
+ input [7:0] DATA1, DATA2 ;                      // |
+ output [7:0] DATA0 ;                            // 
+ reg [7:0] DATA0;                                // 
+
+ reg [7:0] highreg_output, lowreg_output;        // 
+
+The cursor position above is marked by '|' . Empty lines will be ignored.
+
+The default starting column is 49 ( = (multiple of 2,4, or 8) + 1 ).  This can
+be changed by setting a global variable in the file '.vimrc', e.g. :
+
+  let g:vlog_LineEndCommColDefault    = 45
+
+The starting column can also be set by the menu entry 'Comments->Set End Comm.
+Col.' . Just position the cursor in an arbitrary column (column number is
+shown in the Vim status line) and choose this menu entry.  This setting is
+buffer related.
+
+If the cursor was at the end of a line you will be asked for a column number
+because this position is most likely not the desired starting column.
+Your choice will be confirmed.
+
+
+1.1.2 CODE TO COMMENT                               *vlogsupport-code-to-comm*
+---------------------
+
+A marked block will be changed into
+// input [7:0] DATA1, DATA2 ;
+// output [7:0] DATA0 ;
+// reg [7:0] DATA0;
+// 
+// reg [7:0] highreg_output, lowreg_output;
+
+The menu entry works also for a single line. A single line needs not to be
+marked (normal mode). 
+
+
+1.1.3 COMMENT TO CODE                               *vlogsupport-comm-to-code*
+---------------------
+
+A marked block 
+
+// input [7:0] DATA1, DATA2 ;
+// output [7:0] DATA0 ;
+  reg [7:0] DATA0;
+// 
+// reg [7:0] highreg_output, lowreg_output;
+
+will be changed into
+ input [7:0] DATA1, DATA2 ;
+ output [7:0] DATA0 ;
+ reg [7:0] DATA0;
+ 
+ reg [7:0] highreg_output, lowreg_output;
+
+ The menu entry works also for a single line. A single line needs not to be
+marked (normal mode). 
+
+1.1.4   Block-Comment                           *vlogsupport-block-comment*
+------------------------------------
+A marked block will be enclosed between /* -- */ making it
+as block comment
+
+/*input [7:0] DATA1, DATA2 ;
+output [7:0] DATA0 ;
+reg [7:0] DATA0;
+ 
+reg [7:0] highreg_output, */  lowreg_output;
+
+This menu entry works only in VISUAL mode (A block of text is selected)
+
+1.1.5   Block-Uncomment                           *vlogsupport-block-uncomment*
+------------------------------------
+The block comment is removed in the marked text
+
+input [7:0] DATA1, DATA2 ;
+output [7:0] DATA0 ;
+reg [7:0] DATA0;
+ 
+reg [7:0] highreg_output, lowreg_output;
+
+This menu entry works only in VISUAL mode (A block of text is selected)
+
+1.1.6 FRAME COMMENTS, FILE HEADER, ...            *vlogsupport-comm-templates*
+--------------------------------------
+
+Frame comments, function descriptions and file header comments are read as
+templates from the appropriate files (see |vlogsupport-tempfiles|).
+
+1.1.7 Date Comments									 *vlogsupport-comm-date*
+------------------------------------------
+Inserts date or Date + current time.
+These can be used for to bookmark your code.
+
+
+1.1.8 KEYWORD+comment                              *vlogsupport-comm-keywords*
+---------------------
+
+Preliminary line end comments to document (and find again) places where work
+will be resumed shortly, like
+
+   // :BUG:5/15/2008:: <your comment>
+
+Usually not meant for the final documentation.
+
+1.1.9  Tags + Comment							 *vlogsupport-comm-tags*
+---------------------------------------------------------------------------------
+Inserts the value of the tags (Global variables) defined(see |vlogsupport-tags|).
+
+
+------------------------------------------------------------------------------
+1.2  MENU 'Statements'                                *vlogsupport-statements*
+------------------------------------------------------------------------------
+
+1.2.1  NORMAL MODE, INSERT MODE.                   *vlogsupport-stat-norm-ins*
+--------------------------------
+
+An empty statement will be inserted and properly indented. The entry 'if'
+will insert an if-statement:
+
+ if (expression)
+ begin
+
+ end
+
+The statements will be indented.
+
+1.2.2  VISUAL MODE                                   *vlogsupport-stat-visual*
+------------------
+The highlighted area (...) will be surrounded by a statement.
+
+  highreg_output = 0;
+  lowreg_output = 0;
+  
+=>
+  if (expression)
+  begin
+    	highreg_output = 0;
+	    lowreg_output = 0;
+  end
+  
+  
+
+1.2.3 CODE SNIPPETS                                *vlogsupport-stat-snippets*
+-------------------
+
+Code snippets are pieces of code which are kept in separate files in a special
+directory. File names are used to identify the snippets.  The default snippet
+directory is  '$VIM/vimfiles/vlog-support/codesnippets'.  Snippets are managed
+with the 3 entries 
+
+   Verilog -> Statements -> read  code snippet
+   Verilog -> Statements -> write code snippet
+   Verilog -> Statements -> edit code snippet
+
+from the Statements submenu.
+
+Creating a new snippet:  
+-----------------------
+When nothing is marked, "write code snippet" will write the whole buffer 
+to a snippet file, otherwise the marked area will be written to a file.
+
+Insert a snippet:
+-----------------
+Select the appropriate file from the snippet directory ("read  code snippet").
+The inserted lines will be indented.
+
+Indentation / no indentation
+----------------------------
+Code snippets are normally indented after insertion. To suppress indentation
+add the file extension "ni" or "noindent" to the snippet file name, e.g.
+
+  parameter_handling.v.noindent
+
+
+------------------------------------------------------------------------------
+1.3     Menu Miscellaneous                         *vlogsupport-miscellaneous*
+------------------------------------------------------------------------------
+
+
+1.3.1 Force-Release							 *vlogsupport-force-release*
+-------------------------------------------------------------------------------
+Inserts a template of force-release statement
+	force
+    signal=value;
+    release signal;
+
+1.3.2 Assign-Deassign						 *vlogsupport-assign-deassign*    
+----------------------------------------------------------------------------------
+Inserts a template of assign-deassign statement
+	assign
+	signal=value;
+	deassign signal;
+
+1.3.3 Translate-Off/Translate-on				 *vlogsupport-translateon-off*
+----------------------------------------------------------------------------------
+Encloses the selected block between translate-of/translate-on
+/* synthesis translate-off */
+
+
+	always @(clk or rst or set)
+	if (rst)
+	     force q <= 1;
+	else if (set)
+	      force q<= 0;
+	else
+	      release q;
+	      
+	endmodule
+
+/* synthesis translate-on */
+
+------------------------------------------------------------------------------
+1.3     Menu Plugin settings                     *vlogsupport-plugin-settings*
+------------------------------------------------------------------------------
+Click this to see the setting done for the Current Window.
+
+------------------------------------------------------------------------------
+1.5     Help (plugin)                           *vlogsupport-help-plugin*
+------------------------------------------------------------------------------
+This will open the help for this Verilog plugin.
+
+
+
+==============================================================================
+2.0  CUSTOMIZATION                                 *vlogsupport-customization*
+==============================================================================
+
+-----------------------------------------------------------------------------
+2.1  FILES                                          *vlogsupport-custom-files*
+------------------------------------------------------------------------------
+
+README.vlogsupport                  Release notes, installation description.
+
+ftplugin/verlog.vim                 The filetype plugin. Defines Dictionary and more.
+
+plugin/vlog-support.vim             The vlog plugin for gVim.
+
+doc/vlogsupport.txt                 The help file for the local online help. 
+
+vlog-support/codesnippets/*         Some code snippets as a starting point.
+
+vlog-support/templates/*            vlog template files (see |vlogsupport-comm-templates|).
+
+vlog-support/wordlists/*            Additional word lists (dictionaries).
+
+------------------------------------------------------------------------------
+2.2  GLOBAL VARIABLES                           *vlogsupport-custom-variables*
+------------------------------------------------------------------------------
+
+Several global variables are checked by the script to customize it:
+
+---------------------------------------------------------------------------------------
+global variable                default value                     tag 
+                                                               (see |vlogsupport-tags|)
+---------------------------------------------------------------------------------------
+g:VERILOG_AuthorName              ""                               *|AUTHOR|*
+g:VERILOG_AuthorRef               ""                               *|AUTHORREF|*
+g:VERILOG_Company                 ""                               *|COMPANY|*
+g:VERILOG_CopyrightHolder         ""                               *|COPYRIGHTHOLDER|*
+g:VERILOG_Email                   ""                               *|EMAIL|*
+g:VERILOG_Project                 ""                               *|PROJECT|*
+
+g:VERILOG_Template_Directory      s:plugin_dir."vlog-support/templates/"
+g:VERILOG_Template_File           "vlog-file-header"
+g:VERILOG_Template_Frame          "vlog-frame"
+g:VERILOG_Template_Function       "vlog-function-description"
+
+g:VERILOG_CodeSnippets            s:plugin_dir."vlog-support/codesnippets/"
+g:VERILOG_LoadMenus               "yes"
+g:VERILOG_Dictionary_File         s:plugin_dir."vlog-support/wordlists/vlog.list"
+g:VERILOG_Root                    '&Verilog.'
+
+g:vlog_LineEndCommColDefault   49
+g:vlog_Printheader             "%<%f%h%m%<  %=%{strftime('%x %X')}     Page %N"
+
+--------------------------------------------------------------------------------
+
+1. group: Defines the text which will be inserted for the tags when a template  
+          is read in (see |vlogsupport-tempfiles|).
+
+          g:VERILOG_AuthorName      : author name
+          g:VERILOG_AuthorRef       : author reference (e.g. acronym)
+          g:VERILOG_Email           : email address
+          g:VERILOG_Company         : name of the company / institution
+          g:VERILOG_Project         : project
+          g:VERILOG_CopyrightHolder : the copyright holder
+
+2. group: Sets the template directory and the names of the template files (see below).
+
+3. group: g:VERILOG_CodeSnippets    : The name of the code snippet directory 
+                                   (see |vlogsupport-stat-snippets|).
+          g:VERILOG_LoadMenus       : Load menus and mappings ("yes", "no") at start up.
+          g:VERILOG_Dictionary_File : Path and file name of the vlog word list used for
+                                   dictionary completion (see |vlogsupport-dictionary|).
+          g:VERILOG_Root            : The name of the root menu entry of this plugin 
+                                   (see |vlogsupport-custom-root|).
+
+4. group: g:VERILOG_LineEndCommColDefault  : default starting column for line end comments 
+          g:VERILOG_Printheader            : hardcopy header format 
+                    
+To override the defaults add appropriate assignments in '.vimrc'. (For windows in $VIM/_vimrc)
+Here are my settings as an example:
+
+  let g:VERILOG_AuthorName   = "T. Anil Kumar"     
+  let g:VERILOG_AuthorRef    = "MTS"                         
+  let g:VERILOG_Email        = "anil.tallaprada@gmail.com"            
+  let g:VERILOG_Company      = "Synplicity Software India PVT Ltd" 
+
+
+------------------------------------------------------------------------------
+2.3  THE ROOT MENU                                   *vlogsupport-custom-root*
+------------------------------------------------------------------------------
+
+The variable g:VERILOG_Root, if set (in '.vimrc' or in '.gvimrc'or _vimrc for windows), gives the name
+of the single gVim root menu entry in which the vlog submenus will be put.
+The default is 
+                  '&Verilog.'
+Note the terminating dot. A single root menu entry is appropriate if the
+screen is limited or several plugins are in use.
+
+If g:VERILOG_Root is set to "", this single root menu entry will not appear.  Put
+the following line in '.vimrc' or $VIM/_vimrc
+
+  let g:VERILOG_Root = ""
+
+Now all submenus are put into the gVim root menu. Nice for a
+VERILOG-only-programmer and VERILOG courses. 
+
+If you want to set the plugin root menu into another menu, e.g. 'Plugin', 
+this is done by the following line in '.vimrc'
+
+  let g:VERILOG_Root = "&Plugin.&Verilog."
+
+------------------------------------------------------------------------------
+2.4  Installation                        *vlogsupport-install*
+------------------------------------------------------------------------------
+
+(1) Find the Vim installation directory.
+The Vim ex command ':echo $VIM' gives '/usr/local/share/vim' or something like
+that. Beyond this directory you will find the Vim installation,  e.g. in
+'/usr/local/share/vim/vim71' if Vim version 7.1 has been installed.
+
+(2) Create a new subdirectory 'vimfiles', e.g. '/usr/local/share/vim/vimfiles'.
+
+(3) Install vlog Support
+Copy the archive 'vlog-support.zip' to this new directory and unpack it:
+  unzip vlog-support.zip
+
+(4) Generate the help tags:
+  :helptags $VIM/vimfiles/doc
+
+
+
+
+==============================================================================
+3.  TEMPLATE FILES AND TAGS                            *vlogsupport-tempfiles*
+==============================================================================
+
+------------------------------------------------------------------------------
+3.1  TEMPLATE FILES 
+------------------------------------------------------------------------------
+
+Three menu entries generate block comments:
+
+    vlog -> Comments -> Frame Comment
+    vlog -> Comments -> Function Description
+    vlog -> Comments -> File Header
+
+The comments which will be inserted by these menu entries are read from 
+template files:
+
+------------------------------------------------------------------------------
+MENU ENTRY              FILE                          GLOBAL VARIABLE         
+------------------------------------------------------------------------------
+Frame Comment           vlog-frame                    g:VERILOG_Template_Frame   
+Function Description    vlog-function-description     g:VERILOG_Template_Function
+File Header             vlog-file-header              g:VERILOG_Template_File    
+------------------------------------------------------------------------------
+
+The template files can be written or changed by the user to fulfill special
+requirements (layout for a project or work group already exists, file headers /
+blocks have to be prepared for a documentation tool, ... ).  They can hold not
+only comments but a complete file skeleton if this is necessary.  So you may
+want to lay out your own templates.
+
+------------------------------------------------------------------------------
+3.2  TAGS                                                   *vlogsupport-tags*
+------------------------------------------------------------------------------
+The comments in these files do not have to be personalized but they can be.
+The text can contain the following tags which are replaced by the appropriate
+information when the file is read in:
+
+*|AUTHOR|*           
+*|AUTHORREF|*        
+*|COMPANY|*          
+*|COPYRIGHTHOLDER|*  
+*|EMAIL|*            
+*|PROJECT|*          
+                     
+*|DATE|*            the preferred date representation for the current locale
+                    without the time
+*|DATETIME|*        date and time 
+*|FILENAME|*        filename without path
+*|TIME|*            the preferred time representation for the current locale
+                    without the date and the time zone or name or abbreviation
+*|YEAR|*            the year as a decimal number including the century
+                        
+*|CURSOR|*          the cursor position after insertion of a template
+
+Each tag can occur more than once. The tag |CURSOR| may appear only once.
+The tag |CURSOR| will be the cursor position after the block is read in.
+There is no need to use any of these tags, some or all can be missing.
+
+The template files can actually be links pointing to existing templates.
+
+The format for *|DATE|* ,*|TIME|* , and*|YEAR|* can be set by the user. The
+defaults are
+    *|DATE|*        '%x'    
+    *|TIME|*        '%X %Z'    
+    *|YEAR|*        '%Y'        
+See the manual page of the C function strftime() for the format.  The accepted
+format depends on your system, thus this is not portable!  The maximum length
+of the result is 80 characters.
+
+User defined formats can be set using the following global variables in
+'~/.vimrc' ,  e.g.
+    let g:VERILOG_FormatDate       = '%D'
+    let g:VERILOG_FormatTime       = '%H:%M'
+    let g:VERILOG_FormatYear       = 'year %Y'
+
+
+==============================================================================
+4.  Verilog DICTIONARY                                   *vlogsupport-dictionary*
+==============================================================================
+
+The file 'vlog.list' contains words used as dictionary for automatic word
+completion.  This feature is enabled by default. The default word list is
+
+  $VIM/vimfiles/vlog-support/wordlists/vlog.list
+
+If you want to use an additional list 'Myvlog.List' put the following line into
+ $HOME/.vimrc ( For Windows $VIM/_vimrc)
+
+  let g:VERILOG_Dictionary_File   =  "$VIM/vimfiles/vlog-support/wordlists/vlog.list,".
+                              \   "$HOME/.vim/vlog-support/wordlists/Myvlog.List"
+                              
+The right side is a comma separated list of files. Note the point at the end
+of the first line (string concatenation) and the backslash in front of the 
+second line (continuation line). 
+You can use Vim's dictionary feature CTRL-X, CTRL-K (and CTRL-P, CTRL-N).
+                              
+                              
+Note: 
+a) On Windows $VIM & $HOME will have "\" as path separator, so specify the exact path 
+with "/" as path separator instead of variables and escape the spaces 
+b) Preferably keep the Dictionary files in location which doesnt have a space.
+
+A key mapping for <Shift-Tab> for <CTRL-X><CTRL-K> has been put in ftplugin/verlog.vim    
+So u may also use <shift-tab> for keyword completion.
+
+==============================================================================
+7.  Release Notes                                  *vlogsupport-release-notes*
+==============================================================================
+
+See file 'README.vlogsupport'.
+
+==============================================================================
+vim:tw=78:noet:ts=2:ft=help:norl:

@@ -1,0 +1,5 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2380
+
+This plugin is for those guys who forget the syntax of different constructs in Verilog.This plugin will add a new menu to GVIM. The sub menus when clicked insert appropriate templates.
+This is developed only for GVIM and has key mappings to use with plain VIM. Also its written with windows in mind, so unix user excuse me.
+
